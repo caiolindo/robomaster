@@ -1,0 +1,56 @@
+//Código de exemplo de execução da função sensor_IR, responsável pelo controle do sensor infravermelho. A função retorna um valor booleano
+//o qual mostra se o sensor detectou ou não algo.
+//No fim do documento, existem as funções resumidas que podem ser copiadas e coladas no código principal.
+
+void setup()  {
+
+  Serial.begin(9600);                         //Inicia o serial
+  pinMode(5, INPUT);                          //O pino 5 recebe o digital(preto)
+
+}
+boolean sensor_IR() {                         //Declaração da função
+  if (digitalRead(5) == LOW)  {               //Teste de detecção do sensor 
+    Serial.println("Sensor detectou algo");   //Caso o sensor detecte algo
+    return 1;                                 //Retorna 1 em caso de detecção
+  }
+  else  {                                       
+    Serial.println("Sensor nao detectou algo"); //Caso o sensor não detecte algo
+    return 0;                                 //Retorna 0 em casos sem detecção
+  }
+}
+void loop()  {                               //Loop para testar o funcionamento da função
+  int aux = sensor_IR1();                       //Variável auxiliar para o teste. PS: usar int pode não ter feito muito sentido no teste, mas tanto faz.
+  if (aux == 0) {                              //Se a resposta da funçãoo foi 0, responde que houve detecção. Caso não haja, retorna a opção abaixo.
+    Serial.println("Estamos no loop e não houve colisão");
+  }
+  else
+    Serial.println("Estamos no loop e houve colisão");
+  delay(300);                                 //delay para auxiliar nos testes. Não necessário no original.
+  
+}
+
+
+//                                          PARA COPIAR E COLAR ->
+
+
+
+
+
+
+boolean sensor_IR1() {              //Código 1, super resumido. Sem nenhuma resposta no Serial.
+  if (digitalRead(5) == LOW) {
+    return 1;
+    else
+    return 0;
+  }
+  }
+  boolean sensor_IR2() {             //Código 2. Faz o mesmo que o primeiro, porém com confirmação no Serial.
+  if (digitalRead(5) == LOW) {
+    Serial.println("Sensor detectou algo");
+    return 1;
+    }
+    else {
+    Serial.println("Sensor não detectou algo");
+    return 0;
+    }
+}
