@@ -1,0 +1,100 @@
+#include <Servo.h>
+Servo motor1;
+Servo motor2;
+int cont = 0;
+int i = 0;
+boolean SL1 = false;
+boolean SL2 = false;
+boolean IR = false;
+
+
+
+
+boolean sensor_SL1() {
+  int x = analogRead(A0);
+  boolean leitura;
+  if (x < 690) {
+    leitura = true;
+  }
+  if (x > 690) {
+    leitura = false;
+  }
+
+  return leitura;
+}
+
+boolean sensor_SL2() {
+  int x = analogRead(A1);
+  boolean leitura;
+  if (x < 690) {
+    leitura = true;
+  }
+  if (x > 690) {
+    leitura = false;
+  }
+
+  return leitura;
+}
+
+boolean sensor_IR1() {              //Código 1, super resumido. Sem nenhuma resposta no Serial.
+  if (digitalRead(5) == LOW)
+    return 1;
+  else
+    return 0;
+
+}
+
+
+void setup()
+{
+  //put your setup code here, to run once:
+  pinMode(5, INPUT);
+  Serial.begin(9600);
+  motor1.attach(9);
+  motor2.attach(10);
+}
+
+void loop()
+{
+  IR =  sensor_IR1();
+  SL1 =  sensor_SL1();
+  SL2 = sensor_SL2();
+
+  if (IR == true && SL1 == false && SL2 == false) { //+inimigo - linha1 - linha2  //avanca ao ver inimigo sem linha
+    motor1.write(180);
+    motor2.write(0);
+  }
+
+  if (IR == false && SL1 == false && SL2 == false) { //-inimigo - linha1 - linha2  //gira
+    for (i = 0; i < 14; i++) { //enquanto gira, procura linha ou inimigo
+      motor1.write(180);
+      motor2.write(180);
+      delay(250);
+      IR =  sensor_IR1();
+      SL1 =  sensor_SL1();
+      if ((IR == true)  || ( SL1 == true || SL2 == true)) { //para de girar se achar inimigo ou linha
+        i = 40;
+      }
+    }
+    if (i == 14) { //anda pra frente depois de achar nada
+      motor1.write(0);
+      motor2.write(180);
+      delay(1000);
+      i = 0;
+    }
+  }
+  if (IR == false || ( SL1 == true || SL2 == true)) { //-inimigo +linha - linha2 //recua ao achar linha sem inimigo
+    motor1.write(0);
+    motor2.write(180);
+    delay(2000);
+  }
+
+  if (IR == true || ( SL1 == true || SL2 == true)) { //+inimigo +linha - linha2 // recua ao achar linha com inimigo, e gira em seguida
+    motor1.write(0);
+    motor2.write(180);
+    delay(2000);
+    motor1.write(180);
+    motor2.write(180);
+    delay(1000);
+  }
+}
